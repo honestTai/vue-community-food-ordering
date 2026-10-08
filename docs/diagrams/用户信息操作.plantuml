@@ -1,0 +1,37 @@
+@startuml
+actor User
+participant Controller
+participant UserService
+participant UserMapper
+participant SecurityContextHolder
+
+User -> Controller: 发起用户操作请求
+activate Controller
+Controller -> UserService: 调用operationUser方法
+activate UserService
+UserService -> UserMapper: 查询用户信息
+activate UserMapper
+UserMapper --> UserService: 返回用户信息
+alt 操作类型为禁止登录
+    UserService -> UserMapper: 更新用户类型为NOLOGIN
+else 操作类型为允许登录
+    UserService -> UserMapper: 更新用户类型为CUSTOMER
+else 操作类型为重置密码
+    UserService -> UserMapper: 重置用户密码为默认密码
+else 操作类型为修改信息
+    UserService -> UserMapper: 更新用户信息
+    alt 修改了密码
+        activate SecurityContextHolder
+        UserService -> SecurityContextHolder: 强制退出登录
+        deactivate SecurityContextHolder
+    end
+else 操作类型为添加用户
+    UserService -> UserService: 调用注册方法
+end
+deactivate UserMapper
+deactivate UserService
+UserService --> Controller: 返回操作结果
+deactivate UserService
+Controller --> User: 返回操作结果
+deactivate Controller
+@enduml

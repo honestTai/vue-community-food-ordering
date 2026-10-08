@@ -1,0 +1,27 @@
+@startuml
+actor User
+participant GoodsService
+participant GoodsMapper
+
+User -> GoodsService: 发起获取餐品列表请求
+activate GoodsService
+GoodsService -> GoodsMapper: 调用selectGoodsByPageApp方法查询餐品列表
+activate GoodsMapper
+GoodsMapper --> GoodsService: 返回餐品列表查询结果
+deactivate GoodsMapper
+loop 处理查询结果
+    GoodsService -> GoodsService: 创建分页对象
+    GoodsService -> GoodsService: 调用selectGoodsByPageApp方法查询餐品列表
+    GoodsService -> GoodsService: 获取查询结果并遍历
+    loop 对每个餐品进行判断
+        GoodsService -> GoodsService: 判断餐品图片是否为空
+        alt 餐品图片非空
+            GoodsService -> GoodsService: 调用处理函数处理餐品图片
+        else 餐品图片为空
+            GoodsService -> GoodsService: 跳过处理
+        end
+    end
+end
+GoodsService --> User: 返回处理后的餐品列表结果
+deactivate GoodsService
+@enduml

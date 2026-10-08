@@ -1,0 +1,29 @@
+@startuml
+actor User
+participant Controller
+participant GoodsService
+participant GoodsMapper
+participant BaseFunction
+
+User -> Controller: 发起获取餐品详情请求
+activate Controller
+Controller -> GoodsService: 调用goodsDetail方法
+activate GoodsService
+GoodsService -> GoodsMapper: 调用selectGoodsByAppFromId方法查询餐品详情
+activate GoodsMapper
+GoodsMapper --> GoodsService: 返回餐品详情查询结果
+deactivate GoodsMapper
+alt 餐品图片非空
+    GoodsService -> BaseFunction: 调用stringToList方法处理餐品图片
+    activate BaseFunction
+    BaseFunction --> GoodsService: 返回处理后的餐品图片列表
+    deactivate BaseFunction
+else 餐品图片为空
+    GoodsService -> GoodsService: 不做处理
+end
+GoodsService -> GoodsService: 查询餐品评价总数
+GoodsService --> Controller: 返回处理后的餐品详情
+deactivate GoodsService
+Controller --> User: 返回餐品详情结果
+deactivate Controller
+@enduml

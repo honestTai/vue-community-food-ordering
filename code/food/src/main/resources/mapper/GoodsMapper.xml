@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.takeOut.food.api.mapper.GoodsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.takeOut.food.api.entity.Goods">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="introduce" property="introduce"/>
+        <result column="images" property="images"/>
+        <result column="class_id" property="classId"/>
+        <result column="status" property="status"/>
+        <result column="goodsOrderCount" property="goodsOrderCount"/>
+        <result column="price" property="price"/>
+        <result column="stock" property="stock"/>
+        <result column="sort_introduce" property="sort_introduce"/>
+    </resultMap>
+
+    <resultMap id="goodsMap" type="com.takeOut.food.api.bean.dto.GoodsDto">
+        <collection property="aClass" ofType="com.takeOut.food.api.entity.Class">
+            <result column="className" property="name"/>
+        </collection>
+        <collection property="goods" ofType="com.takeOut.food.api.entity.Goods">
+            <id column="goodsId" property="id"/>
+            <result column="goodsName" property="name"/>
+            <result column="introduce" property="introduce"/>
+            <result column="images" property="images"/>
+            <result column="classId" property="classId"/>
+            <result column="status" property="status"/>
+            <result column="goodsOrderCount" property="goodsOrderCount"/>
+            <result column="price" property="price"/>
+            <result column="stock" property="stock"/>
+            <result column="sort_introduce" property="sort_introduce"/>
+        </collection>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        , name, introduce, images, specification,class_id,status,price,stock,sort_introduce
+    </sql>
+    <select id="selectGoodsByPage" resultMap="goodsMap">
+        select goods.id as goodsId,
+        goods.name as goodsName,
+        goods.introduce,
+        goods.images,
+        goods.price,
+        goods.stock,
+        goods.sort_introduce,
+        goods.class_id as classId,
+        class.name as className,
+        goods.status
+        from goods as goods
+        inner join class as class on class.id = goods.class_id
+        where 1=1
+        <if test="listVto.classId!=null">
+            and class.parent_id=#{listVto.classId}
+        </if>
+        <if test="listVto.likeName!=null and listVto.likeName !=''">
+            and goods.name like CONCAT('%',#{listVto.likeName},'%')
+        </if>
+    </select>
+    <select id="selectGoodsByPageApp" resultMap="goodsMap">
+        select goods.id as goodsId,
+        goods.name as goodsName,
+        goods.introduce,
+        goods.images,
+        goods.price,
+        goods.stock,
+        goods.sort_introduce,
+        goods.class_id as classId,
+        class.name as className,
+        goods.status,
+        count(orders.id) as goodsOrderCount
+        from goods as goods
+        inner join class as class on class.id = goods.class_id
+        left join orders as orders on orders.goods_id = goods.id
+        where goods.status=0
+        <if test="goodsPageAppVto.categorySecond!=null">
+            and class.id=#{goodsPageAppVto.categorySecond}
+        </if>
+        <if test="goodsPageAppVto.name!=null and goodsPageAppVto.name !=''">
+            and goods.name like CONCAT('%',#{goodsPageAppVto.name},'%')
+        </if>
+        group by goods.id
+    </select>
+    <select id="selectGoodsByAppFromId" resultMap="goodsMap">
+        select goods.id          as goodsId,
+               goods.name        as goodsName,
+               goods.introduce,
+               goods.images,
+               goods.price,
+               goods.stock,
+               goods.sort_introduce,
+               goods.class_id    as classId,
+               class.name        as className,
+               goods.status,
+               count(orders.id) as goodsOrderCount
+        from goods as goods
+                 inner join class as class on class.id = goods.class_id
+                 left join orders as orders on orders.goods_id = goods.id
+        where goods.id = #{goodsId}
+        group by goods.id
+    </select>
+
+</mapper>

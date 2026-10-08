@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    # 本地开发默认连接本机 MySQL，可通过环境变量覆盖。
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:123456}
+    url: jdbc:mysql://127.0.0.1/${MYSQL_DATABASE:takeoutfoods}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    #   数据源其他配置
+    #初始化时建立物理连接的个数
+    initial-size: 5
+    #最小连接池数量p
+    min-idle: 5
+    #最大连接池数量 maxIdle已经不再使用
+    max-active: 20
+    #获取连接时最大等待时间，单位毫秒
+    max-wait: 60000
+    #申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。
+    test-while-idle: true
+    #既作为检测的间隔时间又作为testWhileIdel执行的依据
+    time-between-eviction-runs-millis: 60000
+    #销毁线程时检测当前连接的最后活动时间和当前时间差大于该值时，关闭当前连接
+    min-evictable-idle-time-millis: 30000
+    #用来检测连接是否有效的sql 必须是一个查询语句
+    #mysql中为 select 'x'
+    #oracle中为 select 1 from dual
+    validation-query: select 'x'
+    #申请连接时会执行validationQuery检测连接是否有效,开启会降低性能,默认为true
+    test-on-borrow: false
+    #归还连接时会执行validationQuery检测连接是否有效,开启会降低性能,默认为true
+    test-on-return: false
+    # 是否缓存preparedStatement
+    pool-prepared-statements: true
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    password: ${REDIS_PASSWORD:}
+    port: ${REDIS_PORT:6379}

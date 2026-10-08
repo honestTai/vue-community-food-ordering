@@ -1,0 +1,29 @@
+@startuml
+actor User
+participant Controller
+participant GoodsService
+participant GoodsMapper
+
+User -> Controller: 发起操作请求
+activate Controller
+Controller -> GoodsService: 调用operationGoods方法
+activate GoodsService
+GoodsService -> GoodsMapper: 根据操作类型执行数据库操作
+activate GoodsMapper
+
+alt 操作类型为更新
+    GoodsMapper --> GoodsService: 执行更新操作
+else 操作类型为删除
+    GoodsMapper --> GoodsService: 执行删除操作
+else 操作类型为添加
+    GoodsMapper --> GoodsService: 执行插入操作
+end
+
+GoodsMapper --> GoodsService: 返回操作结果
+deactivate GoodsMapper
+GoodsService --> Controller: 返回操作结果
+deactivate GoodsService
+Controller --> User: 返回操作结果
+deactivate Controller
+
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+actor User
+participant Controller
+participant AddressService
+participant Database
+
+User -> Controller: 发起获取收货地址请求
+activate Controller
+Controller -> AddressService: 调用userAddress方法
+activate AddressService
+AddressService -> Database: 查询用户收货地址信息
+activate Database
+Database --> AddressService: 返回用户收货地址信息
+deactivate Database
+AddressService --> Controller: 返回收货地址信息结果
+deactivate AddressService
+Controller --> User: 返回收货地址信息结果
+deactivate Controller
+@enduml

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.takeOut.food.api.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.takeOut.food.api.entity.User">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="phone" property="phone"/>
+        <result column="sex" property="sex"/>
+        <result column="time" property="time"/>
+        <result column="type" property="type"/>
+        <result column="number" property="number"/>
+        <result column="password" property="password"/>
+        <result column="headimg_url" property="headimgUrl"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        , name, phone, sex, time, type, number, password,headimg_url,me_status,file
+    </sql>
+    <select id="selectUserByPage" resultType="com.takeOut.food.api.entity.User">
+        select * from `user`
+        where 1=1
+        <if test="listVto.phone!=null and listVto.phone !=''">
+            and phone like CONCAT('%',#{listVto.phone},'%')
+        </if>
+        <if test="listVto.userName!=null and listVto.userName !=''">
+            and name like CONCAT('%',#{listVto.userName},'%')
+        </if>
+        <if test="listVto.userType==1">
+            and `type` =2
+        </if>
+        <if test="listVto.userType==0">
+            and (`type` =0 or `type` =3)
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,31 @@
+@startuml
+actor User
+participant Controller
+participant UserService
+participant UserMapper
+
+User -> Controller: 请求注册
+activate Controller
+Controller -> UserService: 调用registerAppUser方法
+activate UserService
+UserService -> UserMapper: 查询用户是否存在
+activate UserMapper
+UserMapper --> UserService: 返回查询结果
+deactivate UserMapper
+alt 用户已存在
+    UserService -> Controller: 抛出用户已存在异常
+    deactivate UserService
+    Controller --> User: 返回错误信息
+else 用户不存在
+    UserService -> User: 设置注册时间，加密密码
+    deactivate UserService
+    UserService -> UserMapper: 插入新用户信息
+    activate UserMapper
+    UserMapper --> UserService: 返回插入结果
+    deactivate UserMapper
+    UserService --> Controller: 返回注册成功信息
+    deactivate UserService
+    Controller --> User: 返回注册成功信息
+end
+deactivate Controller
+@enduml

@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.takeOut.food.api.mapper.OrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.takeOut.food.api.entity.Order">
+        <id column="id" property="id"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="address_id" property="addressId"/>
+        <result column="time" property="time"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="get_time" property="getTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="order_string" property="orderString"/>
+        <result column="payment_price" property="paymentPrice"/>
+        <result column="num" property="num"/>
+    </resultMap>
+
+    <resultMap id="orderMap" type="com.takeOut.food.api.bean.dto.OrderDto">
+        <collection property="user" ofType="com.takeOut.food.api.entity.User">
+            <id column="userId" property="id"/>
+            <result column="userName" property="name"/>
+            <result column="headimg_url" property="headimgUrl"/>
+            <!--            <result column="sex" property="sex"/>-->
+            <!--            <result column="time" property="time"/>-->
+            <!--            <result column="type" property="type"/>-->
+            <!--            <result column="number" property="number"/>-->
+            <!--            <result column="password" property="password"/>-->
+        </collection>
+        <collection property="order" ofType="com.takeOut.food.api.entity.Order">
+            <id column="orderId" property="id"/>
+            <!--            <result column="goods_id" property="goodsId"/>-->
+            <!--            <result column="address_id" property="addressId"/>-->
+            <result column="time" property="time"/>
+            <result column="type" property="type"/>
+            <result column="status" property="status"/>
+            <result column="get_time" property="getTime"/>
+            <result column="payment_price" property="paymentPrice"/>
+            <result column="num" property="num"/>
+            <result column="order_string" property="orderString"/>
+        </collection>
+        <collection property="address" ofType="com.takeOut.food.api.entity.Address">
+            <id column="id" property="id"/>
+            <result column="address" property="address"/>
+            <result column="name" property="name"/>
+            <result column="phone" property="phone"/>
+            <result column="user_id" property="userId"/>
+        </collection>
+        <collection property="goods" ofType="com.takeOut.food.api.entity.Goods">
+            <id column="goodsId" property="id"/>
+            <result column="goodsName" property="name"/>
+            <result column="images" property="images"/>
+            <result column="sort_introduce" property="sort_introduce"/>
+        </collection>
+    </resultMap>
+
+    <!--导出Dto的拼装-->
+    <resultMap id="exportDto" type="com.takeOut.food.api.bean.dto.ExportDtoGoods">
+        <result column="id" property="goodsId"/>
+        <result column="name" property="goodsName"/>
+        <collection property="exportDtoCustomers" ofType="com.takeOut.food.api.bean.dto.ExportDtoCustomer">
+            <result column="customerName" property="customerName"/>
+            <result column="customerPhone" property="customerPhone"/>
+            <result column="customerAddress" property="customerAddress"/>
+            <result column="time" property="time"/>
+            <result column="orderPrice" property="orderPrice"/>
+            <result column="orderStatus" property="orderStatus"/>
+        </collection>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        , goods_id, address_id, time, type, status, get_time,user_id,order_string,payment_price,num
+    </sql>
+    <update id="updateStock">
+        update goods
+        set stock=stock - #{i}
+        where goods.id = #{goodsId}
+    </update>
+    <update id="updateStatus">
+        update orders
+        set status=#{param2}
+        where id = #{param1}
+    </update>
+    <update id="orderReceive">
+        update orders
+        set status=2,
+            get_time=#{param2}
+        where id = #{param1}
+    </update>
+
+    <select id="selectByPage" resultMap="orderMap">
+        select orders.id as orderId,
+        orders.time,
+        orders.type,
+        orders.status,
+        orders.get_time,
+        orders.payment_price ,
+        orders.num,
+        orders.order_string ,
+        goods.id as goodsId ,
+        goods.name as goodsName ,
+        goods.images ,
+        goods.sort_introduce,
+        address.*,
+        `user`.id as userId,
+        `user`.headimg_url,
+        `user`.name as userName
+        from orders ,
+        goods ,
+        address ,
+        `user`
+        where orders.goods_id = goods.id
+        and orders.address_id = address.id
+        and orders.address_id = address.id
+        and `user`.id = address.user_id
+        <if test="listVto.classId!=null">
+            and goods.class_id=#{listVto.classId}
+        </if>
+        <if test="listVto.likeName!=null and listVto.likeName !=''">
+            and goods.name like CONCAT('%',#{listVto.likeName},'%')
+        </if>
+        <if test="listVto.phone!=null and listVto.phone !=''">
+            and `user`.phone like CONCAT('%',#{listVto.phone},'%')
+        </if>
+        <if test="listVto.userName!=null and listVto.userName !=''">
+            and `user`.name like CONCAT('%',#{listVto.userName},'%')
+        </if>
+        <if test="listVto.orderString !=null and listVto.orderString!=''">
+            and orders.order_string=#{listVto.orderString}
+        </if>
+    </select>
+    <select id="selectCountByGoodsId" resultType="java.lang.Integer">
+        select count(*)
+        from orders
+        where goods_id = #{goodsId}
+          and `status` in (0, 1)
+    </select>
+    <select id="selectCountByLoginUser" resultType="java.lang.Integer">
+        select count(*)
+        from orders
+        where user_id = #{param1}
+          and `status` = #{param2}
+    </select>
+    <select id="orderPage" resultMap="orderMap">
+        select orders.id as orderId,
+        orders.time,
+        orders.type,
+        orders.status,
+        orders.get_time,
+        orders.payment_price ,
+        orders.num,
+        goods.id as goodsId ,
+        goods.name as goodsName ,
+        goods.images,
+        address.*,
+        `user`.id as userId
+        from orders ,
+        goods ,
+        address ,
+        `user`
+        where orders.goods_id = goods.id
+        and orders.address_id = address.id
+        and orders.address_id = address.id
+        and `user`.id = address.user_id
+        and `user`.id=#{orderPageVto.userId}
+        <if test="orderPageVto.status != -1">
+            and orders.status=#{orderPageVto.status}
+        </if>
+        order by orders.`status` desc
+    </select>
+    <select id="orderInfo" resultMap="orderMap">
+        select orders.id         as orderId,
+               orders.time,
+               orders.type,
+               orders.status,
+               orders.get_time,
+               orders.payment_price,
+               orders.order_string,
+               orders.num,
+               goods.id          as goodsId,
+               goods.name        as goodsName,
+               goods.images,
+               address.*,
+               `user`.id         as userId
+        from orders,
+             goods,
+             address,
+             `user`
+        where orders.goods_id = goods.id
+          and orders.address_id = address.id
+          and orders.address_id = address.id
+          and `user`.id = address.user_id
+          and orders.id = #{id}
+    </select>
+    <select id="StatisticsOrders" resultType="com.takeOut.food.api.bean.dto.StatisticsOrderDto">
+        select sum(t1.payment_price) moneys, count(t1.id) orders
+        from `orders` t1 left join goods t2 on t1.goods_id =t2.id
+        where t1.get_time between #{startTime} and #{endTime} and t1.get_time is not null
+    </select>
+    <!--结合ResultMap完成类树的拼装，完成List集合构造-->
+    <select id="exportDtoGoods" resultMap="exportDto">
+        SELECT
+        goods.id,
+        goods.NAME,
+        address.NAME AS customerName,
+        address.address AS customerAddress,
+        address.phone AS customerPhone,
+        orders.time,
+        orders.payment_price AS orderPrice,
+        CASE
+        orders.`status`
+        WHEN 0 THEN
+        '待发货'
+        WHEN 1 THEN
+        '待消费'
+        WHEN 2 THEN
+        '待评价'
+        WHEN 3 THEN
+        '已完成'
+        WHEN 4 THEN
+        '取消'
+        ELSE '已发货'
+        END AS orderStatus
+        FROM
+        goods AS goods
+        RIGHT JOIN orders AS orders ON orders.goods_id = goods.id
+        LEFT JOIN address AS address ON orders.address_id = address.id
+        WHERE 1=1
+        <if test="classId!=null">
+            and goods.class_id=#{classId}
+        </if>
+        <if test="likeName!=null and likeName !=''">
+            and goods.name like CONCAT('%',#{likeName},'%')
+        </if>
+        <if test="phone!=null and phone !=''">
+            and address.phone like CONCAT('%',#{phone},'%')
+        </if>
+        <if test="userName!=null and userName !=''">
+            and address.name like CONCAT('%',#{userName},'%')
+        </if>
+    </select>
+
+</mapper>

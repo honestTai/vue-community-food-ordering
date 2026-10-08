@@ -1,0 +1,132 @@
+{
+	"pages": [
+		{
+			"path": "pages/home/index",
+			"style": {
+				"navigationBarTitleText": "在线点餐首页",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/base/search/index",
+			"style": {
+				"navigationBarTitleText": "搜索"
+			}
+		},
+		{
+			"path": "pages/goods/goods-category/index",
+			"style": {
+				"navigationBarTitleText": "餐品分类"
+			}
+		},
+		{
+			"path": "pages/goods/goods-list/index",
+			"style": {
+				"navigationBarTitleText": "餐品列表"
+			}
+		},
+		{
+			"path": "pages/goods/goods-detail/index",
+			"style": {
+				"navigationBarTitleText": "餐品详情"
+			}
+		},
+		{
+			"path": "pages/order/order-confirm/index",
+			"style": {
+				"navigationBarTitleText": "确认订单"
+			}
+		},
+		{
+			"path": "pages/order/order-list/index",
+			"style": {
+				"navigationBarTitleText": "订单列表",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/order/order-detail/index",
+			"style": {
+				"navigationBarTitleText": "订单详情"
+			}
+		},
+		{
+			"path": "pages/user/user-center/index",
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
+		},
+		{
+			"path": "pages/user/user-address/list/index",
+			"style": {
+				"navigationBarTitleText": "收货地址"
+			}
+		},
+		{
+			"path": "pages/user/user-address/form/index",
+			"style": {
+				"navigationBarTitleText": "新增收货地址"
+			}
+		},
+		{
+			"path": "pages/user/user-cv/list/index",
+			"style": {
+				"navigationBarTitleText": "我的评价"
+			}
+		},
+		{
+			"path": "pages/user/user-cv/form/index",
+			"style": {
+				"navigationBarTitleText": "评价"
+			}
+		},
+		{
+			"path": "pages/comment/list/index",
+			"style": {
+				"navigationBarTitleText": "餐品评价"
+			}
+		}
+        ,{
+            "path" : "pages/user/register/register",
+            "style" :
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+
+        }
+    ],
+	"sitemapLocation": "sitemap.json",
+	"tabBar": {
+		"backgroundColor": "#ffffff",
+		"color": "#484848",
+		"selectedColor": "#000",
+		"list": [
+			{
+				"pagePath": "pages/home/index",
+				"iconPath": "static/public/img/1-001.png",
+				"selectedIconPath": "static/public/img/1-002.png",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/goods/goods-category/index",
+				"iconPath": "static/public/img/2-001.png",
+				"selectedIconPath": "static/public/img/2-002.png",
+				"text": "分类"
+			},
+			{
+				"pagePath": "pages/user/user-center/index",
+				"iconPath": "static/public/img/4-001.png",
+				"selectedIconPath": "static/public/img/4-002.png",
+				"text": "我的"
+			}
+		]
+	},
+	"globalStyle": {
+		"backgroundTextStyle": "dark",
+		"navigationBarBackgroundColor": "#fff",
+		"navigationBarTitleText": "App",
+		"navigationBarTextStyle": "black"
+	},
+	"subPackages": []
+}

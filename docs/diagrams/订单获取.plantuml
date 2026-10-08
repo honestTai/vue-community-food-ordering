@@ -1,0 +1,27 @@
+@startuml
+actor User
+participant Controller
+participant OrderService
+participant OrderMapper
+participant BaseFunction
+
+User -> Controller: 发起订单列表查看请求
+activate Controller
+Controller -> OrderService: 调用orderPage方法
+activate OrderService
+OrderService -> OrderMapper: 调用orderPage方法查询订单列表
+activate OrderMapper
+OrderMapper --> OrderService: 返回订单列表查询结果
+deactivate OrderMapper
+OrderService -> BaseFunction: 调用stringToList方法处理餐品图片
+activate BaseFunction
+BaseFunction --> OrderService: 返回处理后的餐品图片列表
+deactivate BaseFunction
+loop 对每个订单进行处理
+    OrderService -> OrderService: 遍历订单列表，处理餐品图片
+end
+OrderService --> Controller: 返回订单列表查询结果
+deactivate OrderService
+Controller --> User: 返回订单列表查询结果
+deactivate Controller
+@enduml

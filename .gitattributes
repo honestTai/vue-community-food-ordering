@@ -1,0 +1,7 @@
+* text=auto
+*.plantuml text eol=lf
+*.puml text eol=lf
+*.wsd text eol=lf
+*.png binary
+*.jpg binary
+*.db binary

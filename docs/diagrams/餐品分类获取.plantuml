@@ -1,0 +1,34 @@
+@startuml
+actor User
+participant Controller
+participant ClassService
+participant ClassMapper
+User -> Controller: 发起列表查询请求
+activate Controller
+Controller -> ClassService: 调用classList方法
+activate ClassService
+ClassService -> ClassMapper: 查询分类列表数据
+activate ClassMapper
+ClassMapper --> ClassService: 返回分类列表数据
+deactivate ClassMapper
+ClassService -> ClassService: 构建树形结构
+alt 是否有子节点
+  loop 遍历列表数据
+    ClassService -> ClassService: 查找顶层节点
+    alt 找到顶层节点
+      ClassService -> ClassService: 递归查找子节点，并将其添加到父节点的children列表中
+    else 找不到顶层节点
+      ClassService -> ClassService: 不进行任何操作
+    end
+  end
+else
+  ClassService -> ClassService: 没有子节点
+end
+ClassService --> Controller: 返回分类列表数据（树形结构）
+deactivate ClassService
+Controller --> User: 返回分类列表数据（树形结构）
+deactivate Controller
+
+note over User: 用户接收分类列表数据并展示
+
+@enduml

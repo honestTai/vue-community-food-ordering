@@ -1,0 +1,32 @@
+@startuml
+actor User
+participant Controller
+participant UserService
+participant UserMapper
+
+User -> Controller: 发起登录请求
+activate Controller
+Controller -> UserService: 调用login方法
+activate UserService
+alt 用户登录认证
+    UserService -> UserMapper: 查询用户信息
+    activate UserMapper
+    UserMapper --> UserService: 返回用户信息
+    deactivate UserMapper
+    UserService -> UserService: 对密码进行加密
+    UserService -> UserService: 验证密码是否正确
+    alt 密码正确
+        UserService -> UserService: 生成JWT token
+        UserService -> UserService: 设置认证信息到Spring Security上下文中
+        UserService -> UserService: 注入当前用户的基本信息到UserLocal中
+        UserService --> Controller: 返回登录成功信息
+    else 密码错误
+        UserService --> Controller: 抛出密码错误异常
+    end
+else 用户认证失败
+    UserService --> Controller: 抛出用户认证失败异常
+end
+deactivate UserService
+Controller --> User: 返回登录结果
+deactivate Controller
+@enduml

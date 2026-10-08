@@ -1,0 +1,30 @@
+@startuml
+actor User
+participant Controller
+participant ClassService
+participant ClassMapper
+
+User -> Controller: 发起数据库操作请求
+activate Controller
+Controller -> ClassService: 调用operationClass方法
+activate ClassService
+ClassService -> ClassMapper: 根据操作类型执行数据库操作
+activate ClassMapper
+ClassMapper --> ClassService: 返回操作结果
+
+alt 操作类型为 ADD
+    ClassService -> ClassMapper: 执行插入操作
+else 操作类型为 UPDATE
+    ClassService -> ClassMapper: 执行更新操作
+else 操作类型为 DELETE
+    ClassService -> ClassMapper: 执行删除操作
+end
+deactivate ClassMapper
+ClassService --> Controller: 返回操作结果
+deactivate ClassService
+Controller --> User: 返回操作结果
+deactivate Controller
+
+note over User: 用户接收操作结果并处理
+
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+actor User
+participant Controller
+participant UserService
+participant UserMapper
+
+User -> Controller: 发起列表查询请求
+activate Controller
+Controller -> UserService: 调用list方法
+activate UserService
+UserService -> UserMapper: 调用selectUserByPage方法查询用户列表
+activate UserMapper
+UserMapper --> UserService: 返回用户列表查询结果
+deactivate UserMapper
+UserService --> Controller: 返回用户列表查询结果
+deactivate UserService
+Controller --> User: 返回用户列表查询结果
+deactivate Controller
+@enduml

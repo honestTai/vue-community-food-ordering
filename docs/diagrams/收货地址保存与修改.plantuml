@@ -1,0 +1,20 @@
+@startuml
+actor User
+participant Controller
+participant AddressService
+
+User -> Controller: 发起添加收货地址请求
+activate Controller
+Controller -> AddressService: 调用addAddress方法
+activate AddressService
+alt 判断收货地址ID是否为空
+    Controller -> AddressService: 调用updateById方法更新收货地址信息
+else 收货地址ID为空
+    Controller -> AddressService: 设置收货地址用户ID并调用save方法添加新地址
+end
+deactivate AddressService
+AddressService --> Controller: 返回添加收货地址结果
+deactivate AddressService
+Controller --> User: 返回添加收货地址结果
+deactivate Controller
+@enduml

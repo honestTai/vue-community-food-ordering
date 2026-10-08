@@ -1,0 +1,24 @@
+@startuml
+actor User
+participant Controller
+participant EvaluationService
+participant OrderService
+database Database
+
+User -> Controller: 发起订单评价请求
+activate Controller
+Controller -> EvaluationService: 调用orderCv方法
+activate EvaluationService
+EvaluationService -> Database: 保存评价信息到数据库
+activate Database
+Database --> EvaluationService: 返回保存成功
+deactivate Database
+EvaluationService -> OrderService: 调用updateStatus方法更新订单状态
+activate OrderService
+OrderService --> EvaluationService: 返回更新订单状态成功
+deactivate OrderService
+EvaluationService --> Controller: 返回订单评价成功信息
+deactivate EvaluationService
+Controller --> User: 返回订单评价成功信息
+deactivate Controller
+@enduml

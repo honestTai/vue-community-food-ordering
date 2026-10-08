@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.takeOut.food.api.mapper.EvaluationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.takeOut.food.api.entity.Evaluation">
+        <id column="id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="time" property="time"/>
+        <result column="user_id" property="userId"/>
+        <result column="reply_id" property="replyId"/>
+        <result column="goods_id" property="goodsId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        , content, time, user_id, reply_id,goods_id
+    </sql>
+
+    <select id="selectCommentListByPage" resultType="com.takeOut.food.api.bean.dto.CommentDto">
+        select t1.content, t2.name as userName, t1.id, t1.time, t1.reply_content, t1.reply_time, t1.reply_status
+        from evaluation t1
+                 left join `user` t2 on t1.user_id = t2.id
+        where t1.goods_id = #{listVto.goodsId}
+    </select>
+
+    <update id="addReplyContent">
+        update evaluation
+        set reply_content=#{replyContent},
+            reply_time=now(),
+            reply_status=1,
+            reply_id=#{replyId}
+        where id = #{id}
+    </update>
+    <select id="userCommentPage" resultType="com.takeOut.food.api.bean.dto.CommentDto">
+        select t1.content, t2.name as userName, t1.id, t1.time, t1.reply_content, t1.reply_time, t1.reply_status,t2.headimg_url,t3.name as goodsName,t3.id as goodsId
+        from evaluation t1
+                 left join `user` t2 on t1.user_id = t2.id
+                 inner join goods t3 on t3.id=t1.goods_id
+        where t1.user_id = #{param2}
+    </select>
+
+    <select id="goodsCommentPage" resultType="com.takeOut.food.api.bean.dto.CommentDto">
+        select t1.content, t2.name as userName, t1.id, t1.time, t1.reply_content, t1.reply_time, t1.reply_status,t2.headimg_url,t3.name as goodsName,t3.id as goodsId
+        from evaluation t1
+                 left join `user` t2 on t1.user_id = t2.id
+                 inner join goods t3 on t3.id=t1.goods_id
+        where t3.id = #{param2}
+    </select>
+
+
+</mapper>

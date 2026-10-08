@@ -1,0 +1,33 @@
+@startuml
+actor User
+participant Controller
+participant OrderService
+participant GoodsService
+database Database
+
+User -> Controller: 提交订单请求
+activate Controller
+Controller -> OrderService: 调用orderAdd方法
+activate OrderService
+OrderService -> GoodsService: 获取订单中餐品信息
+activate GoodsService
+GoodsService --> OrderService: 返回订单中餐品信息
+deactivate GoodsService
+loop 对每个订单进行处理
+    OrderService -> OrderService: 设置订单编号、下单时间、用户ID等基本信息
+    OrderService -> OrderService: 根据消费方式设置订单状态
+    OrderService -> GoodsService: 获取订单中餐品的单价和库存信息
+    activate GoodsService
+    GoodsService --> OrderService: 返回订单中餐品的单价和库存信息
+    deactivate GoodsService
+    OrderService -> OrderService: 计算购买数量并更新餐品库存
+end
+OrderService -> Database: 批量保存订单数据
+activate Database
+Database --> OrderService: 保存订单数据成功
+deactivate Database
+OrderService --> Controller: 返回订单提交成功信息
+deactivate OrderService
+Controller --> User: 返回订单提交成功信息
+deactivate Controller
+@enduml

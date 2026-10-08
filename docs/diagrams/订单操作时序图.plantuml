@@ -1,0 +1,33 @@
+@startuml
+actor User
+participant Controller
+participant OrderService
+participant OrderMapper
+participant TakeUserMapper
+
+User -> Controller: 发起操作请求
+activate Controller
+Controller -> OrderService: 调用operationOrder方法
+activate OrderService
+OrderService -> OrderMapper: 查询订单信息
+activate OrderMapper
+OrderMapper --> OrderService: 返回订单信息
+
+alt 操作类型为更新
+    activate TakeUserMapper
+    OrderService -> TakeUserMapper: 插入取货人信息
+    TakeUserMapper --> OrderService: 返回插入结果
+    deactivate TakeUserMapper
+    OrderService -> OrderMapper: 更新订单状态
+    OrderMapper --> OrderService: 返回更新结果
+else 操作类型为删除
+    OrderService -> OrderMapper: 删除订单
+    OrderMapper --> OrderService: 返回删除结果
+end
+deactivate OrderMapper
+deactivate OrderService
+OrderService --> Controller: 返回操作结果
+deactivate OrderService
+Controller --> User: 返回操作结果
+deactivate Controller
+@enduml
